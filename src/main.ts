@@ -54,7 +54,6 @@ export default class LinkAsSearch extends Plugin {
 			}
 		}, true);
 
-
 		// --- CLICK AND SEARCH LOGIC ---
 		this.registerDomEvent(document, 'mousedown', async (evt: MouseEvent) => {
 			const target = evt.target as HTMLElement;

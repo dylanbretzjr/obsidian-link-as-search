@@ -1,5 +1,5 @@
-import {Notice, Plugin} from 'obsidian';
-import {DEFAULT_SETTINGS, MyPluginSettings} from "./settings";
+import {Notice, Plugin, TFile} from 'obsidian';
+import {DEFAULT_SETTINGS, MyPluginSettings, LinkAsSearchSettingTab} from "./settings";
 
 export default class LinkAsSearch extends Plugin {
 	settings: MyPluginSettings;
@@ -7,23 +7,24 @@ export default class LinkAsSearch extends Plugin {
 	async onload() {
 		await this.loadSettings();
 
-		this.registerDomEvent(document, 'mousedown', (evt: MouseEvent) => {
+		this.addSettingTab(new LinkAsSearchSettingTab(this.app, this));
+		this.toggleUnresolvedClass();
+
+		this.registerDomEvent(document, 'mousedown', async (evt: MouseEvent) => {
 			const target = evt.target as HTMLElement;
 
-			if (target.classList.contains('cm-link-alias-pipe')) {
+			// Ignore clicks on Markdown syntax characters (like | [[ ]])
+			if (target.classList.contains('cm-link-alias-pipe') || target.classList.contains('cm-formatting-link')) {
 				return;
 			}
 
-			// Capture the link element in Reading, Live Preview, and Source modes
+			// Capture the link element across all editor modes
 			const linkEl = target.closest('.internal-link, .cm-underline, .cm-hmd-internal-link') as HTMLElement;
-
 			if (!linkEl) return;
 
-			// 1. Prevent the default editor/browser behavior
 			evt.preventDefault();
 			evt.stopPropagation();
 
-			// 2. Get clicked text and establish base variables
 			const clickedText = linkEl.innerText.trim();
 			let destination = clickedText;
 			let sourcePath = "";
@@ -33,31 +34,39 @@ export default class LinkAsSearch extends Plugin {
 				sourcePath = activeFile.path;
 			}
 
-			// 3. Resolve the true destination (handling aliases)
+			// Resolve the true destination (handling aliases and metadata)
 			const dataHref = linkEl.getAttribute('data-href');
-
 			if (dataHref) {
-				// Reading Mode: use the reliable data attribute
 				destination = dataHref;
 			} else if (activeFile) {
-				// Source/Live Preview Mode: query Obsidian's metadata cache
 				const cache = this.app.metadataCache.getFileCache(activeFile);
-
 				if (cache && cache.links) {
-					// Find the link object matching the clicked alias or raw link
 					const matchedLink = cache.links.find(l => 
 						l.displayText === clickedText || l.link === clickedText
 					);
-
 					if (matchedLink) {
 						destination = matchedLink.link;
 					}
 				}
 			}
 
-			if (!destination) return; // Failsafe
+			if (!destination) return; 
 
-			// 4. Trigger Global Search (Wrapped in quotes for exact matching)
+			// --- FILE RESOLUTION ---
+			
+			// Try to find an exact match first
+			let targetFile = this.app.metadataCache.getFirstLinkpathDest(destination, sourcePath);
+
+			// If no exact match exists, scan for a file that contains the ID/Text in its name
+			if (!targetFile) {
+				const files = this.app.vault.getMarkdownFiles();
+				targetFile = files.find(f => f.basename.startsWith(destination)) 
+						  || files.find(f => f.basename.includes(destination)) 
+						  || null;
+			}
+
+			// --- GLOBAL SEARCH ---
+			
 			const searchPlugin = (this.app as any).internalPlugins.getPluginById('global-search');
 			if (searchPlugin && searchPlugin.enabled) {
 				const exactQuery = `"${destination}"`;
@@ -65,11 +74,22 @@ export default class LinkAsSearch extends Plugin {
 				new Notice(`Searching vault for: ${exactQuery}`);
 			}
 
-			// 5. Manually open the link
-			// The third argument (evt.metaKey) handles opening in a new tab if Cmd/Ctrl is held
-			this.app.workspace.openLinkText(destination, sourcePath, evt.metaKey);
+			// --- OPENING THE FILE ---
+			
+			if (targetFile) {
+				const leafToUse = evt.metaKey ? 'tab' : false;
+				const leaf = this.app.workspace.getLeaf(leafToUse);
+				await leaf.openFile(targetFile);
+			} else {
+				// Fallback for non-existent files
+				this.app.workspace.openLinkText(destination, sourcePath, evt.metaKey);
+			}
 
 		}, true);
+	}
+
+	onunload() {
+		document.body.classList.remove('link-as-search-hide-unresolved');
 	}
 
 	async loadSettings() {
@@ -78,5 +98,14 @@ export default class LinkAsSearch extends Plugin {
 
 	async saveSettings() {
 		await this.saveData(this.settings);
+	}
+
+	// Toggles the CSS class used to remove the "dimmed" look of unresolved links
+	toggleUnresolvedClass() {
+		if (this.settings.hideUnresolvedIndicator) {
+			document.body.classList.add('link-as-search-hide-unresolved');
+		} else {
+			document.body.classList.remove('link-as-search-hide-unresolved');
+		}
 	}
 }

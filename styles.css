@@ -1,8 +1,31 @@
-/*
+/* =========================================
+   BASE STATES
+   ========================================= */
 
-This CSS file will be included with your plugin, and
-available in the app when your plugin is enabled.
+/* Force unresolved links to match the standard link color and opacity */
+body.link-as-search-hide-unresolved .markdown-source-view.mod-cm6 .is-unresolved,
+body.link-as-search-hide-unresolved .markdown-source-view.mod-cm6 .is-unresolved *,
+body.link-as-search-hide-unresolved .cm-s-obsidian .cm-hmd-internal-link.is-unresolved,
+body.link-as-search-hide-unresolved .markdown-rendered .internal-link.is-unresolved {
+    --link-unresolved-color: var(--link-color) !important;
+    color: var(--link-color) !important;
+    opacity: 1 !important;
+    filter: none !important;
+    -webkit-filter: none !important;
+    text-decoration-color: var(--link-color) !important;
+    cursor: pointer !important;
+}
 
-If your plugin does not need CSS, delete this file.
+/* =========================================
+   HOVER STATES
+   ========================================= */
 
-*/
+/* Ensure unresolved links still use the theme's hover color */
+body.link-as-search-hide-unresolved .markdown-source-view.mod-cm6 .is-unresolved:hover,
+body.link-as-search-hide-unresolved .markdown-source-view.mod-cm6 .is-unresolved:hover *,
+body.link-as-search-hide-unresolved .cm-s-obsidian .cm-hmd-internal-link.is-unresolved:hover,
+body.link-as-search-hide-unresolved .markdown-rendered .internal-link.is-unresolved:hover {
+    --link-unresolved-color: var(--link-color-hover) !important;
+    color: var(--link-color-hover) !important;
+    text-decoration-color: var(--link-color-hover) !important;
+}

@@ -1,18 +1,18 @@
-import {App, PluginSettingTab, Setting} from "obsidian";
-import MyPlugin from "./main";
+import { App, PluginSettingTab, Setting } from 'obsidian';
+import LinkAsSearch from './main';
 
 export interface MyPluginSettings {
-	mySetting: string;
+	hideUnresolvedIndicator: boolean;
 }
 
 export const DEFAULT_SETTINGS: MyPluginSettings = {
-	mySetting: 'default'
+	hideUnresolvedIndicator: true
 }
 
-export class SampleSettingTab extends PluginSettingTab {
-	plugin: MyPlugin;
+export class LinkAsSearchSettingTab extends PluginSettingTab {
+	plugin: LinkAsSearch;
 
-	constructor(app: App, plugin: MyPlugin) {
+	constructor(app: App, plugin: LinkAsSearch) {
 		super(app, plugin);
 		this.plugin = plugin;
 	}
@@ -23,14 +23,14 @@ export class SampleSettingTab extends PluginSettingTab {
 		containerEl.empty();
 
 		new Setting(containerEl)
-			.setName('Settings #1')
-			.setDesc('It\'s a secret')
-			.addText(text => text
-				.setPlaceholder('Enter your secret')
-				.setValue(this.plugin.settings.mySetting)
+			.setName('Hide unresolved link indicator')
+			.setDesc('Removes the dimmed effect from all unresolved links.')
+			.addToggle(toggle => toggle
+				.setValue(this.plugin.settings.hideUnresolvedIndicator)
 				.onChange(async (value) => {
-					this.plugin.settings.mySetting = value;
+					this.plugin.settings.hideUnresolvedIndicator = value;
 					await this.plugin.saveSettings();
+					this.plugin.toggleUnresolvedClass(); 
 				}));
 	}
 }

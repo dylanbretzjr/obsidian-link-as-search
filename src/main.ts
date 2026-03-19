@@ -1,5 +1,6 @@
 import { Notice, Plugin, TFile } from 'obsidian';
 import { DEFAULT_SETTINGS, LinkAsSearchSettings, LinkAsSearchSettingTab } from "./settings";
+import { IdLinkSuggester } from "./suggester";
 
 // Explicitly define internal plugins
 declare module 'obsidian' {
@@ -23,6 +24,9 @@ export default class LinkAsSearch extends Plugin {
 
 		this.addSettingTab(new LinkAsSearchSettingTab(this.app, this));
 		this.toggleUnresolvedClass();
+
+		// --- REGISTER CUSTOM SUGGESTER ---
+		this.registerEditorSuggest(new IdLinkSuggester(this.app, this));
 
 		// --- HOVER PREVIEW LOGIC ---
 		this.registerDomEvent(document, 'mouseover', (evt: MouseEvent) => {

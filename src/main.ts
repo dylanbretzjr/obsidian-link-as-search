@@ -114,7 +114,7 @@ export default class LinkAsSearch extends Plugin {
 
 	// Toggles the CSS class used to remove the "dimmed" look of unresolved links
 	toggleUnresolvedClass() {
-		if (this.settings.hideUnresolvedIndicator) {
+		if (this.settings.hideUnresolvedLinkStyling) {
 			document.body.classList.add('link-as-search-hide-unresolved');
 		} else {
 			document.body.classList.remove('link-as-search-hide-unresolved');

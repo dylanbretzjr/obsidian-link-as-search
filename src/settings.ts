@@ -2,12 +2,12 @@ import { App, PluginSettingTab, Setting } from 'obsidian';
 import LinkAsSearch from './main';
 
 export interface LinkAsSearchSettings {
-	hideUnresolvedIndicator: boolean;
+	hideUnresolvedLinkStyling: boolean;
 	searchOnClick: boolean;
 }
 
 export const DEFAULT_SETTINGS: LinkAsSearchSettings = {
-	hideUnresolvedIndicator: true,
+	hideUnresolvedLinkStyling: false,
 	searchOnClick: false
 }
 
@@ -38,9 +38,9 @@ export class LinkAsSearchSettingTab extends PluginSettingTab {
 			.setName('Hide unresolved link indicator')
 			.setDesc('Removes the dimmed effect from all unresolved links.')
 			.addToggle(toggle => toggle
-				.setValue(this.plugin.settings.hideUnresolvedIndicator)
+				.setValue(this.plugin.settings.hideUnresolvedLinkStyling)
 				.onChange(async (value) => {
-					this.plugin.settings.hideUnresolvedIndicator = value;
+					this.plugin.settings.hideUnresolvedLinkStyling = value;
 					await this.plugin.saveSettings();
 					this.plugin.toggleUnresolvedClass(); 
 				}));

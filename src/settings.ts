@@ -2,13 +2,13 @@ import { App, PluginSettingTab, Setting } from 'obsidian';
 import LinkAsSearch from './main';
 
 export interface LinkAsSearchSettings {
-	hideUnresolvedLinkStyling: boolean;
 	searchOnClick: boolean;
+	hideUnresolvedLinkStyling: boolean;
 }
 
 export const DEFAULT_SETTINGS: LinkAsSearchSettings = {
-	hideUnresolvedLinkStyling: false,
-	searchOnClick: false
+	searchOnClick: false,
+	hideUnresolvedLinkStyling: false
 }
 
 export class LinkAsSearchSettingTab extends PluginSettingTab {

@@ -14,3 +14,7 @@ This approach decouples the link target from the note title itself, which allows
 
 - **Search on click (backlink view)**---When enabled, clicking on an internal link opens Obsidian's Search panel and triggers a vault-wide search using the link target as the query. This provides a way of viewing backlinks.
 - **Hide unresolved link styling**---Enables CSS that removes the dimmed appearance of unresolved internal links so that links made using UIDs look identical to standard resolved links. Note that this affects _all_ unresolved links in the vault, not only those made using UIDs.
+- **Enable link ID autocomplete**---When enabled, typing a configurable trigger string (default: @@) opens an autocomplete menu to search for notes. Selecting a note inserts its UID as an internal link instead of the full filename.
+    - **Trigger string**---Define the character sequence that activates the link ID autocomplete search.
+    - **ID delimiter**---Specify the character(s) separating the ID from the rest of the filename (e.g., a space or dash). Must not be a character used in the ID itself. Avoid using common markdown syntactical elements (e.g., `_`, `*`, `>`, or `[`).
+    - **ID position**---Set whether the ID is located at the start or end of filenames.

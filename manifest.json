@@ -1,7 +1,7 @@
 {
 	"id": "link-by-id",
 	"name": "Link by ID",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"minAppVersion": "1.0.0",
 	"description": "Link notes using unique IDs, rather than full filenames or paths.",
 	"author": "Dylan Bretz Jr.",

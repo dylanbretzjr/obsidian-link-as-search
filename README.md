@@ -12,7 +12,7 @@ This approach decouples the link target from the note title itself, which allows
 
 ## Installation
 
-Until it reviewed as an official Obsidian plugin, the only way to install this plugin is manually:
+Until it is reviewed as an official Obsidian plugin, the only way to install this plugin is manually:
 
 1. Clone the plugin repo using git to a folder .obsidian/plugins/ within your Obsidian vault
 2. npm install
